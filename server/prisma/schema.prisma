@@ -1,0 +1,209 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                   String        @id @default(auto()) @map("_id") @db.ObjectId
+  email                String        @unique
+  name                 String
+  password             String
+  role                 String        @default("USER") // SUPER_ADMIN, ADMIN, EDITOR, CUSTOMER_SUPPORT, USER
+  isVerified           Boolean       @default(false)
+  avatarUrl            String?
+  verificationToken    String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  
+  orders               Order[]
+  customBuilds         CustomBuild[]
+  reviews              Review[]
+  activityLogs         ActivityLog[]
+  tickets              SupportTicket[]
+}
+
+model Product {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  slug           String           @unique
+  description    String
+  basePrice      Float
+  category       String           // LAMP, DRONE
+  images         String[]
+  specs          Json             // Dynamic key-value pairs
+  rating         Float            @default(0)
+  reviewCount    Int              @default(0)
+  isCustomizable Boolean          @default(false)
+  cadFileUrl     String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  variants       ProductVariant[]
+  reviews        Review[]
+}
+
+model ProductVariant {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku       String   @unique
+  name      String
+  price     Float
+  stock     Int      @default(0)
+  attributes Json     // e.g. { color: "Matte Black", material: "Carbon Fiber" }
+}
+
+model Warehouse {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  location    String
+  inventories Inventory[]
+}
+
+model Inventory {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  warehouseId    String          @db.ObjectId
+  warehouse      Warehouse       @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  variantId      String          @db.ObjectId
+  quantity       Int             @default(0)
+  stockMovements StockMovement[]
+}
+
+model StockMovement {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  inventoryId String    @db.ObjectId
+  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  quantity    Int       // Positive = Inbound, Negative = Outbound
+  type        String    // INBOUND, OUTBOUND, ADJUSTMENT
+  reason      String?
+  createdAt   DateTime  @default(now())
+}
+
+model CustomBuild {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String?  @db.ObjectId
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  category      String   // LAMP, DRONE
+  configuration Json     // Custom attributes { material, color, size, finish, lighting, logoUrl, dimensions }
+  price         Float
+  createdAt     DateTime @default(now())
+}
+
+model Order {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String      @db.ObjectId
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  total           Float
+  status          String      @default("PENDING") // PENDING, PAID, PROCESSING, MANUFACTURING, SHIPPED, DELIVERED, CANCELLED
+  shippingAddress Json        // Shipping address components
+  paymentIntentId String?
+  paymentStatus   String      @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  couponCode      String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderId       String  @db.ObjectId
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String  @db.ObjectId
+  variantId     String? @db.ObjectId
+  customBuildId String? @db.ObjectId
+  name          String
+  price         Float
+  quantity      Int
+}
+
+model Review {
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  productId          String        @db.ObjectId
+  product            Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId             String        @db.ObjectId
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userName           String
+  userAvatar         String?
+  rating             Int
+  comment            String
+  images             String[]
+  videoUrl           String?
+  isVerifiedPurchase Boolean       @default(false)
+  helpfulVotes       Int           @default(0)
+  replies            ReviewReply[]
+  isSoftDeleted      Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model ReviewReply {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  reviewId  String   @db.ObjectId
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  userName  String
+  userRole  String
+  comment   String
+  createdAt DateTime @default(now())
+}
+
+model SupportTicket {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String?         @db.ObjectId
+  user      User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String
+  subject   String
+  category  String          // ORDER, CUSTOM_BUILD, TECHNICAL, GENERAL
+  status    String          @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  messages  TicketMessage[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model TicketMessage {
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  ticketId   String        @db.ObjectId
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId   String?       @db.ObjectId
+  senderName String
+  senderRole String        // SUPER_ADMIN, ADMIN, EDITOR, CUSTOMER_SUPPORT, USER, VISITOR
+  message    String
+  createdAt  DateTime      @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  ipAddress String?
+  userAgent String?
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model CMSContent {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model BlogPost {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  slug      String   @unique
+  content   String
+  summary   String
+  coverImage String
+  authorId  String   @db.ObjectId
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
