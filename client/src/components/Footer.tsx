@@ -22,94 +22,114 @@ export const Footer: React.FC<FooterProps> = ({ setPage }) => {
   };
 
   return (
-    <footer className="w-full bg-[#030303] border-t border-white/5 pt-16 pb-8 px-6 md:px-16 text-white/50 text-sm font-sans">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+    <footer className="w-full bg-[#111111] border-t border-white/10 pt-24 pb-12 px-6 md:px-16 text-white/50 text-sm font-sans">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-16 mb-24">
         {/* Brand details */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 md:w-1/3">
           <div 
             onClick={() => setPage('home')} 
-            className="flex items-center gap-1 cursor-pointer select-none text-white"
+            className="flex flex-col cursor-pointer select-none text-white"
           >
-            <span className="font-display font-bold text-xl tracking-wider">
-              LUMEN <span className="text-white/40 font-light">x</span> DELI
+            <span className="font-display font-bold text-2xl tracking-widest uppercase">
+              PROJECT DELI
             </span>
-            <span className="neon-dot-cyan"></span>
+            <span className="font-display text-lg text-white/70 mt-1">
+              Engineering Tomorrow's Innovation
+            </span>
           </div>
-          <p className="text-xs text-white/40 pr-4 leading-relaxed">
-            Luxury high-end additive-manufactured lighting systems and modular, CNC-sintered structural drone components for precision flights.
+          <p className="text-sm text-white/40 leading-relaxed font-light max-w-sm mt-4">
+            Luxury additive manufacturing,<br/>
+            professional drones,<br/>
+            custom 3D printing,<br/>
+            and precision engineering.
           </p>
         </div>
 
-        {/* Catalog Categories */}
-        <div className="flex flex-col gap-4">
-          <h4 className="text-white font-display font-semibold tracking-wide text-xs">COLLECTIONS</h4>
-          <ul className="flex flex-col gap-2.5 text-xs">
-            <li><button onClick={() => setPage('shop')} className="hover:text-neon-cyan transition-colors text-left cursor-pointer">Bespoke 3D Lamps</button></li>
-            <li><button onClick={() => setPage('shop')} className="hover:text-neon-cyan transition-colors text-left cursor-pointer">Carbon Drone Parts</button></li>
-          </ul>
-        </div>
+        {/* Links & Newsletter */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:w-2/3">
+          {/* Products */}
+          <div className="flex flex-col gap-6">
+            <h4 className="text-white font-display font-semibold tracking-widest text-xs uppercase">PRODUCTS</h4>
+            <ul className="flex flex-col gap-4 text-sm font-light text-white/60">
+              <li><button onClick={() => setPage('shop')} className="hover:text-white transition-colors text-left cursor-pointer">• 3D Printed Lamps</button></li>
+              <li><button onClick={() => setPage('shop')} className="hover:text-white transition-colors text-left cursor-pointer">• Drones</button></li>
+              <li><button onClick={() => setPage('shop')} className="hover:text-white transition-colors text-left cursor-pointer">• Accessories</button></li>
+              <li><button onClick={() => setPage('shop')} className="hover:text-white transition-colors text-left cursor-pointer">• Custom Orders</button></li>
+            </ul>
+          </div>
 
-        {/* Company and Philosophy */}
-        <div className="flex flex-col gap-4">
-          <h4 className="text-white font-display font-semibold tracking-wide text-xs">COMPANY</h4>
-          <ul className="flex flex-col gap-2.5 text-xs">
-            <li><button onClick={() => setPage('about')} className="hover:text-neon-cyan transition-colors text-left cursor-pointer">About Our Brand</button></li>
-            <li><button onClick={() => setPage('contact')} className="hover:text-neon-cyan transition-colors text-left cursor-pointer">Contact Secure Desk</button></li>
-            <li><button onClick={() => setPage('support')} className="hover:text-neon-cyan transition-colors text-left cursor-pointer">Technical Support Queue</button></li>
-          </ul>
-        </div>
+          {/* Company */}
+          <div className="flex flex-col gap-6">
+            <h4 className="text-white font-display font-semibold tracking-widest text-xs uppercase">COMPANY</h4>
+            <ul className="flex flex-col gap-4 text-sm font-light text-white/60">
+              <li><button onClick={() => setPage('about')} className="hover:text-white transition-colors text-left cursor-pointer">• About</button></li>
+              <li><button className="hover:text-white transition-colors text-left cursor-pointer">• Careers</button></li>
+              <li><button onClick={() => setPage('contact')} className="hover:text-white transition-colors text-left cursor-pointer">• Contact</button></li>
+              <li><button onClick={() => setPage('support')} className="hover:text-white transition-colors text-left cursor-pointer">• Support</button></li>
+            </ul>
+          </div>
 
-        {/* Newsletter Signup */}
-        <div className="flex flex-col gap-4">
-          <h4 className="text-white font-display font-semibold tracking-wide text-xs">ENGINEERING UPDATES</h4>
-          <p className="text-xs text-white/40 leading-relaxed">
-            Subscribe to receive manufacturing briefs, CAD model updates, and community pilot discount alerts.
-          </p>
-          
-          <form onSubmit={handleSubscribe} className="flex gap-2 relative mt-2">
-            <input
-              type="email"
-              placeholder="operator@domain.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#0a0a0a] border border-white/10 rounded-full px-4 py-2.5 text-xs text-white placeholder-white/30 focus:outline-none focus:border-neon-cyan transition-all"
-              required
-            />
-            <button
-              type="submit"
-              className="absolute right-1.5 top-1.5 bg-white text-black p-1.5 rounded-full hover:bg-neon-cyan transition-colors"
-            >
-              <Send size={12} />
-            </button>
-          </form>
-          {subscribed && (
-            <span className="text-[10px] text-neon-cyan font-semibold tracking-wide animate-pulse">
-              Transmission received. Welcome aboard.
-            </span>
-          )}
+          {/* Resources */}
+          <div className="flex flex-col gap-6">
+            <h4 className="text-white font-display font-semibold tracking-widest text-xs uppercase">RESOURCES</h4>
+            <ul className="flex flex-col gap-4 text-sm font-light text-white/60">
+              <li><button className="hover:text-white transition-colors text-left cursor-pointer">• Blog</button></li>
+              <li><button className="hover:text-white transition-colors text-left cursor-pointer">• FAQs</button></li>
+              <li><button className="hover:text-white transition-colors text-left cursor-pointer">• Shipping</button></li>
+              <li><button className="hover:text-white transition-colors text-left cursor-pointer">• Warranty</button></li>
+            </ul>
+          </div>
+
+          {/* Newsletter Signup */}
+          <div className="flex flex-col gap-6">
+            <h4 className="text-white font-display font-semibold tracking-widest text-xs uppercase">NEWSLETTER</h4>
+            <p className="text-sm font-light text-white/60 leading-relaxed">
+              Stay updated with our latest products and innovations.
+            </p>
+            
+            <form onSubmit={handleSubscribe} className="flex flex-col gap-3 mt-2">
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40 transition-all"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full bg-white text-[#111111] font-semibold py-3 rounded-sm hover:bg-gray-200 transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+            {subscribed && (
+              <span className="text-xs text-white mt-1">
+                Thank you for subscribing.
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
+      <div className="max-w-7xl mx-auto w-full h-[1px] bg-white/10 mb-8" />
+
       {/* Footer Bottom Row */}
-      <div className="max-w-7xl mx-auto border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-[11px] text-white/30">
-          <span>&copy; 2026 LUMEN X DELI. All engineering rights reserved.</span>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-white transition-colors">Terms of Operations</a>
-            <a href="#" className="hover:text-white transition-colors">SLA & Security</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy Shield</a>
-          </div>
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <span className="text-xs text-white/40 font-light">&copy; 2026 PROJECT DELI</span>
+        
+        <div className="flex gap-8 text-xs text-white/40 font-light">
+          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-white transition-colors">Terms & Conditions</a>
+          <a href="#" className="hover:text-white transition-colors">Refund Policy</a>
         </div>
 
         {/* Back to top anchor */}
         <button
           onClick={scrollToTop}
-          className="flex items-center gap-2 text-xs text-white/40 hover:text-neon-cyan transition-all group"
+          className="flex items-center gap-2 text-xs text-white/40 font-light hover:text-white transition-all group"
         >
-          Back to Orbit
-          <span className="p-2 border border-white/5 rounded-full group-hover:border-neon-cyan/30 group-hover:text-neon-cyan transition-all">
-            <ArrowUp size={12} />
-          </span>
+          Back to Top <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
         </button>
       </div>
     </footer>

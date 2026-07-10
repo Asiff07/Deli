@@ -1,245 +1,148 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
-import { ShoppingCart, User as UserIcon, Heart, Compass, Cpu, HelpCircle, Shield, LogOut, Menu, X, Home as HomeIcon, Info, Mail, Sun, Moon } from 'lucide-react';
-import axios from 'axios';
 
 interface NavbarProps {
-  currentPath: string;
   setPage: (page: string) => void;
-  openCart: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentPath, setPage, openCart }) => {
-  const { user, getCartCount, wishlist, logoutStore } = useCartStore();
+export const Navbar: React.FC<NavbarProps> = ({ setPage }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [isLightTheme, setIsLightTheme] = useState(false);
+  const { user } = useCartStore();
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
-  const toggleTheme = () => {
-    const body = document.body;
-    body.classList.toggle('light-theme');
-    setIsLightTheme(body.classList.contains('light-theme'));
-  };
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
 
-  const handleLogout = async () => {
-    try {
-      await axios.post('/api/v1/auth/logout');
-      logoutStore();
-      setPage('home');
-      setUserDropdownOpen(false);
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
-  };
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 20);
+
+      // Hide on scroll down, show on scroll up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
-    { name: 'Home', path: 'home', icon: HomeIcon },
-    { name: 'Shop', path: 'shop', icon: Compass },
-    { name: 'About Us', path: 'about', icon: Info },
-    { name: 'Contact Us', path: 'contact', icon: Mail },
-    { name: 'Support', path: 'support', icon: HelpCircle },
+    { name: 'Home', path: 'home' },
+    { name: 'Products', path: 'shop' },
+    { name: 'About', path: 'about' },
+    { name: 'Contact', path: 'contact' },
+    { name: 'Support', path: 'support' },
   ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 glass-panel border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-between">
-      {/* Brand Logo */}
-      <div 
-        onClick={() => { setPage('home'); setMobileMenuOpen(false); }} 
-        className="flex items-center gap-1 cursor-pointer select-none"
+    <nav
+      className={`fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-[1200px] z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${hidden ? '-translate-y-32 opacity-0 scale-95' : 'translate-y-0 opacity-100 scale-100'
+        } ${scrolled
+          ? 'bg-white/60 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/40'
+          : 'bg-white/80 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-white/50'
+        } rounded-full flex items-center justify-between px-6 h-[72px]`}
+    >
+      {/* Brand */}
+      <div
+        onClick={() => setPage('home')}
+        className="flex items-center gap-2 cursor-pointer group"
       >
-        <span className="font-display font-bold text-lg md:text-xl tracking-wider text-white">
-          LUMEN <span className="text-white/40 font-light">x</span> DELI
+        <span className="font-display font-bold text-lg tracking-tight text-[#111111] group-hover:opacity-80 transition-opacity">
+          PROJECT DELI
         </span>
-        <span className="neon-dot-cyan"></span>
       </div>
 
-      {/* Desktop Navigation Links */}
-      <div className="hidden md:flex items-center gap-8">
-        {navLinks.map((link) => {
-          const isActive = currentPath === link.path;
-          return (
-            <button
-              key={link.path}
-              onClick={() => setPage(link.path)}
-              className={`font-sans font-medium text-sm tracking-wide transition-all flex items-center gap-2 cursor-pointer ${
-                isActive ? 'text-white text-glow-white font-semibold' : 'text-white/70 hover:text-white hover:text-glow-white'
-              }`}
-            >
-              <link.icon size={15} />
-              {link.name}
-            </button>
-          );
-        })}
+      {/* Desktop Links */}
+      <div className="hidden lg:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+        {navLinks.map((link) => (
+          <button
+            key={link.name}
+            onClick={() => setPage(link.path)}
+            className="px-4 py-2 rounded-full text-[13px] font-sans font-medium text-[#111111]/70 hover:text-[#111111] hover:bg-black/5 transition-all duration-300 cursor-pointer"
+          >
+            {link.name}
+          </button>
+        ))}
       </div>
 
-      {/* Action Icons Panel */}
-      <div className="hidden md:flex items-center gap-6">
-        {/* Light/Dark Mode Switcher */}
-        <button
-          onClick={toggleTheme}
-          className="text-white/70 hover:text-neon-cyan transition-colors cursor-pointer"
-          title={isLightTheme ? "Switch to Dark Mode" : "Switch to Light Mode"}
-        >
-          {isLightTheme ? <Moon size={18} /> : <Sun size={18} />}
-        </button>
-
-        {/* Wishlist Button */}
-        <button 
-          onClick={() => setPage('dashboard')} 
-          className="relative text-white/70 hover:text-neon-rose transition-colors cursor-pointer"
-        >
-          <Heart size={20} />
-          {wishlist.length > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-neon-rose text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-              {wishlist.length}
-            </span>
-          )}
-        </button>
-
-        {/* Cart Trigger */}
-        <button 
-          onClick={openCart} 
-          className="relative text-white/70 hover:text-neon-cyan transition-colors cursor-pointer"
-        >
-          <ShoppingCart size={20} />
-          {getCartCount() > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-neon-cyan text-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-              {getCartCount()}
-            </span>
-          )}
-        </button>
-
-        {/* User Account / Profile Dropdown */}
+      {/* Right Actions */}
+      <div className="hidden lg:flex items-center gap-4">
         {user ? (
-          <div className="relative">
-            <button
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="flex items-center gap-2 text-white/80 hover:text-white glass-capsule px-3 py-1.5 text-xs font-sans tracking-wide cursor-pointer"
-            >
-              {user.avatarUrl ? (
-                <img src={user.avatarUrl} alt="Avatar" className="w-5 h-5 rounded-full object-cover" />
-              ) : (
-                <UserIcon size={14} className="text-neon-cyan" />
-              )}
-              {user.name}
-            </button>
-
-            {userDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 glass-panel rounded-lg py-2 shadow-2xl border border-white/10 z-50">
-                <button
-                  onClick={() => { setPage('dashboard'); setUserDropdownOpen(false); }}
-                  className="w-full text-left px-4 py-2 text-xs text-white/80 hover:bg-white/5 hover:text-neon-cyan flex items-center gap-2"
-                >
-                  <UserIcon size={14} /> My Profile
-                </button>
-                {['ADMIN', 'EDITOR', 'CUSTOMER_SUPPORT'].includes(user.role) && (
-                  <button
-                    onClick={() => { setPage('admin'); setUserDropdownOpen(false); }}
-                    className="w-full text-left px-4 py-2 text-xs text-white/80 hover:bg-white/5 hover:text-neon-cyan flex items-center gap-2"
-                  >
-                    <Shield size={14} className="text-neon-yellow" /> Admin Panel
-                  </button>
-                )}
-                <div className="border-t border-white/5 my-1"></div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-xs text-neon-rose hover:bg-white/5 flex items-center gap-2"
-                >
-                  <LogOut size={14} /> Logout
-                </button>
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setPage('admin')}
+            className="text-[#111111]/70 hover:text-[#111111] px-4 py-2 text-[13px] font-sans font-medium transition-colors cursor-pointer"
+          >
+            Dashboard
+          </button>
         ) : (
           <button
             onClick={() => setPage('auth')}
-            className="liquid-glass-cyan px-4 py-1.5 rounded-full text-xs font-sans font-semibold tracking-wide cursor-pointer"
+            className="text-[#111111]/70 hover:text-[#111111] px-4 py-2 text-[13px] font-sans font-medium transition-colors cursor-pointer"
           >
-            Sign In
+            Login
           </button>
         )}
+
+        <button
+          onClick={() => setPage('contact')}
+          className="bg-[#0057FF] hover:bg-[#004BE6] text-white px-5 py-2 rounded-full text-[13px] font-sans font-semibold transition-all hover:shadow-[0_4px_14px_rgba(0,87,255,0.39)] cursor-pointer transform hover:scale-[1.02]"
+        >
+          Get Quote
+        </button>
       </div>
 
       {/* Mobile Menu Icon */}
-      <div className="md:hidden flex items-center gap-4">
-        {/* Light/Dark Mode Switcher mobile */}
-        <button
-          onClick={toggleTheme}
-          className="text-white/70 hover:text-neon-cyan transition-colors cursor-pointer"
-        >
-          {isLightTheme ? <Moon size={18} /> : <Sun size={18} />}
-        </button>
-
-        {/* Cart Trigger mobile */}
-        <button onClick={openCart} className="relative text-white/70 hover:text-neon-cyan transition-colors">
-          <ShoppingCart size={20} />
-          {getCartCount() > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-neon-cyan text-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-              {getCartCount()}
-            </span>
-          )}
-        </button>
+      <div className="lg:hidden flex items-center">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-white/70 hover:text-white"
+          className="text-[#111111] p-2 hover:bg-black/5 rounded-full transition-colors cursor-pointer"
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile Dropdown */}
       {mobileMenuOpen && (
-        <div className="absolute top-[68px] left-0 w-full glass-panel border-b border-white/10 flex flex-col py-6 px-8 gap-4 md:hidden z-40 animate-fade-in">
-          {navLinks.map((link) => {
-            const isActive = currentPath === link.path;
-            return (
-              <button
-                key={link.path}
-                onClick={() => { setPage(link.path); setMobileMenuOpen(false); }}
-                className={`text-left font-sans py-2 text-base flex items-center gap-3 transition-all ${
-                  isActive ? 'text-white text-glow-white font-semibold' : 'text-white/80 hover:text-white hover:text-glow-white'
-                }`}
-              >
-                <link.icon size={18} />
-                {link.name}
-              </button>
-            );
-          })}
-          <div className="border-t border-white/5 my-2"></div>
+        <div className="absolute top-[calc(100%+16px)] left-0 w-full bg-white/95 backdrop-blur-3xl rounded-3xl p-6 flex flex-col gap-2 shadow-[0_24px_48px_rgba(0,0,0,0.1)] border border-gray-100 lg:hidden origin-top animate-in slide-in-from-top-4 fade-in duration-300">
+          {navLinks.map((link) => (
+            <button
+              key={link.name}
+              onClick={() => { setPage(link.path); setMobileMenuOpen(false); }}
+              className="text-[#111111] text-left px-4 py-3 rounded-xl text-[15px] font-sans font-medium hover:bg-black/5 transition-colors"
+            >
+              {link.name}
+            </button>
+          ))}
+          <div className="h-[1px] bg-gray-100 my-2" />
           {user ? (
-            <>
-              <button
-                onClick={() => { setPage('dashboard'); setMobileMenuOpen(false); }}
-                className="text-left font-sans text-white/80 py-2 text-base flex items-center gap-3"
-              >
-                <UserIcon size={18} /> My Profile
-              </button>
-              {['ADMIN', 'EDITOR', 'CUSTOMER_SUPPORT'].includes(user.role) && (
-                <button
-                  onClick={() => { setPage('admin'); setMobileMenuOpen(false); }}
-                  className="text-left font-sans text-neon-yellow py-2 text-base flex items-center gap-3"
-                >
-                  <Shield size={18} /> Admin Dashboard
-                </button>
-              )}
-              <button
-                onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
-                className="text-left font-sans text-neon-rose py-2 text-base flex items-center gap-3"
-              >
-                <LogOut size={18} /> Logout
-              </button>
-            </>
+            <button
+              onClick={() => { setPage('admin'); setMobileMenuOpen(false); }}
+              className="bg-gray-50 text-[#111111] text-center py-3 rounded-xl text-[15px] font-sans font-medium tracking-wide mt-2"
+            >
+              Dashboard
+            </button>
           ) : (
             <button
               onClick={() => { setPage('auth'); setMobileMenuOpen(false); }}
-              className="liquid-glass-cyan text-center py-2.5 rounded-full text-sm font-sans font-semibold tracking-wide"
+              className="bg-gray-50 text-[#111111] text-center py-3 rounded-xl text-[15px] font-sans font-medium tracking-wide mt-2"
             >
-              Sign In
+              Login
             </button>
           )}
+          <button
+            onClick={() => { setPage('contact'); setMobileMenuOpen(false); }}
+            className="bg-[#0057FF] text-white text-center py-3 rounded-xl text-[15px] font-sans font-semibold tracking-wide mt-2 shadow-md"
+          >
+            Get Quote
+          </button>
         </div>
       )}
     </nav>
   );
 };
-export default Navbar;

@@ -15,7 +15,7 @@ export const getProducts = async (req: Request, res: Response, next: NextFunctio
     // Build filter query
     const whereClause: any = {};
     
-    if (category && (category === 'LAMP' || category === 'DRONE')) {
+    if (category && category !== 'ALL') {
       whereClause.category = category;
     }
 

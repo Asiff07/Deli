@@ -17,7 +17,7 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
   const [totalPages, setTotalPages] = useState(1);
 
   // Filters state
-  const [category, setCategory] = useState<'ALL' | 'LAMP' | 'DRONE'>('ALL');
+  const [category, setCategory] = useState<'LAMP' | 'DRONE' | 'BLUETOOTH_CAR'>('LAMP');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('');
   const [page, setPageNum] = useState(1);
@@ -39,7 +39,7 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const catQuery = category !== 'ALL' ? `&category=${category}` : '';
+      const catQuery = `&category=${category}`;
       const searchQuery = search ? `&search=${search}` : '';
       const sortQuery = sort ? `&sort=${sort}` : '';
       const res = await axios.get(`/api/v1/products?page=${page}&limit=6${catQuery}${searchQuery}${sortQuery}`);
@@ -143,30 +143,29 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
   };
 
   return (
-    <div className="w-full bg-[#050505] min-h-screen text-white pt-24 pb-16 px-6 md:px-16 font-sans">
+    <div className="w-full bg-[#FAF9F6] min-h-screen text-[#111111] pt-24 pb-16 px-6 md:px-16 font-sans">
       <div className="max-w-7xl mx-auto flex flex-col gap-8">
-        
+
         {/* Header Title */}
         <div className="text-left">
-          <span className="text-[10px] text-neon-cyan tracking-widest font-semibold uppercase">Synthesis Store</span>
-          <h1 className="font-display font-bold text-3xl md:text-5xl text-white mt-1">PRODUCT CATALOG</h1>
+          <span className="text-[10px] text-[#0057FF] tracking-widest font-semibold uppercase">Synthesis Store</span>
+          <h1 className="font-display font-bold text-3xl md:text-5xl text-[#111111] mt-1">PRODUCT CATALOG</h1>
         </div>
 
         {/* Filter Controls Row */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 glass-panel p-4 rounded-xl border border-white/5">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#E5E7EB] p-4 rounded-xl border border-black/5">
           {/* Category Tabs */}
-          <div className="flex gap-2 w-full md:w-auto">
-            {(['ALL', 'LAMP', 'DRONE'] as const).map((cat) => (
+          <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 scrollbar-none">
+            {(['LAMP', 'DRONE', 'BLUETOOTH_CAR'] as const).map((cat) => (
               <button
                 key={cat}
                 onClick={() => { setCategory(cat); setPageNum(1); }}
-                className={`flex-1 md:flex-none px-5 py-2 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
-                  category === cat
+                className={`flex-1 md:flex-none px-5 py-2 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer whitespace-nowrap ${category === cat
                     ? 'bg-white text-black font-bold'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
-                }`}
+                    : 'text-black/60 hover:text-[#111111] hover:bg-black/5'
+                  }`}
               >
-                {cat === 'ALL' ? 'ALL PRODUCTS' : cat === 'LAMP' ? 'LAMPS' : 'DRONE PARTS'}
+                {cat === 'LAMP' ? 'LAMPS' : cat === 'DRONE' ? 'DRONE ACCESSORIES' : 'BLUETOOTH CARS'}
               </button>
             ))}
           </div>
@@ -179,15 +178,15 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
                 placeholder="Search specs..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-black/40 border border-white/10 rounded-full pl-9 pr-4 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-neon-cyan"
+                className="w-full bg-black/5 border border-black/10 rounded-full pl-9 pr-4 py-2 text-xs text-[#111111] placeholder-white/30 focus:outline-none focus:border-[#0057FF]"
               />
-              <Search className="absolute left-3.5 top-3.5 text-white/30" size={13} />
+              <Search className="absolute left-3.5 top-3.5 text-black/30" size={13} />
             </form>
 
             <select
               value={sort}
               onChange={(e) => { setSort(e.target.value); setPageNum(1); }}
-              className="bg-[#0a0a0a] border border-white/10 rounded-full px-4 py-2 text-xs text-white/70 focus:outline-none focus:border-neon-cyan w-full md:w-auto cursor-pointer"
+              className="bg-white border border-black/10 rounded-full px-4 py-2 text-xs text-black/70 focus:outline-none focus:border-[#0057FF] w-full md:w-auto cursor-pointer"
             >
               <option value="">Sort by (Default)</option>
               <option value="price_asc">Price: Low to High</option>
@@ -199,9 +198,9 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
 
         {/* Catalog Grid */}
         {loading ? (
-          <div className="py-24 text-center text-xs text-white/40 tracking-wider">Loading physical catalog assets...</div>
+          <div className="py-24 text-center text-xs text-black/40 tracking-wider">Loading physical catalog assets...</div>
         ) : products.length === 0 ? (
-          <div className="py-24 text-center text-xs text-white/30 tracking-wider">No matching physical inventory matches search filters.</div>
+          <div className="py-24 text-center text-xs text-black/30 tracking-wider">No matching physical inventory matches search filters.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((product) => {
@@ -209,60 +208,57 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
               const inCompare = compareList.some((p) => p.id === product.id);
 
               return (
-                <div key={product.id} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col justify-between relative overflow-hidden group">
+                <div key={product.id} className="bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#E5E7EB] p-5 rounded-2xl border border-black/5 flex flex-col justify-between relative overflow-hidden group">
                   {/* Heart / Wishlist Trigger */}
                   <button
                     onClick={() => toggleWishlist(product)}
-                    className={`absolute top-4 right-4 p-2 rounded-full border border-white/5 transition-all z-10 cursor-pointer ${
-                      inWish ? 'bg-neon-rose/10 border-neon-rose/30 text-neon-rose' : 'bg-black/40 text-white/50 hover:text-white'
-                    }`}
+                    className={`absolute top-4 right-4 p-2 rounded-full border border-black/5 transition-all z-10 cursor-pointer ${inWish ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-black/5 text-black/50 hover:text-[#111111]'
+                      }`}
                   >
-                    <Heart size={14} className={inWish ? 'fill-neon-rose' : ''} />
+                    <Heart size={14} className={inWish ? 'fill-red-500' : ''} />
                   </button>
 
                   <div onClick={() => handleOpenProduct(product)} className="cursor-pointer">
                     {/* Hover zoom image container */}
-                    <div className="w-full h-48 rounded-lg overflow-hidden relative mb-4 border border-white/5">
+                    <div className="w-full h-48 rounded-lg overflow-hidden relative mb-4 border border-black/5">
                       <img
                         src={product.images[0]}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <span className="absolute bottom-2 left-2 bg-black/60 text-white/80 border border-white/5 px-2 py-0.5 text-[9px] rounded font-semibold tracking-wider">
+                      <span className="absolute bottom-2 left-2 bg-black/60 text-black/80 border border-black/5 px-2 py-0.5 text-[9px] rounded font-semibold tracking-wider">
                         {product.category}
                       </span>
                     </div>
 
-                    <h3 className={`font-display font-bold text-sm text-white transition-colors truncate ${
-                      product.category === 'LAMP' ? 'group-hover:text-neon-yellow' : 'group-hover:text-neon-cyan'
-                    }`}>
+                    <h3 className={`font-display font-bold text-sm text-[#111111] transition-colors truncate ${product.category === 'LAMP' ? 'group-hover:text-[#FFC857]' : 'group-hover:text-[#0057FF]'
+                      }`}>
                       {product.name}
                     </h3>
-                    <p className="text-[11px] text-white/40 line-clamp-2 mt-1 leading-relaxed min-h-[32px]">
+                    <p className="text-[11px] text-black/40 line-clamp-2 mt-1 leading-relaxed min-h-[32px]">
                       {product.description}
                     </p>
 
                     {/* Ratings */}
                     <div className="flex items-center gap-1 mt-3">
-                      <Star size={11} className="fill-neon-yellow text-neon-yellow" />
-                      <span className="text-[10px] text-white font-semibold">{product.rating.toFixed(1)}</span>
-                      <span className="text-[10px] text-white/30">({product.reviewCount} reviews)</span>
+                      <Star size={11} className="fill-[#FFC857] text-[#FFC857]" />
+                      <span className="text-[10px] text-[#111111] font-semibold">{product.rating.toFixed(1)}</span>
+                      <span className="text-[10px] text-black/30">({product.reviewCount} reviews)</span>
                     </div>
                   </div>
 
                   {/* Actions Row */}
-                  <div className="flex items-center justify-between border-t border-white/5 pt-4 mt-5">
-                    <span className="text-sm font-bold text-white">₹{product.basePrice.toFixed(0)}</span>
-                    
+                  <div className="flex items-center justify-between border-t border-black/5 pt-4 mt-5">
+                    <span className="text-sm font-bold text-[#111111]">₹{product.basePrice.toFixed(0)}</span>
+
                     <div className="flex items-center gap-2">
                       {/* Compare Checkbox */}
                       <button
                         onClick={() => handleToggleCompare(product)}
-                        className={`p-2 rounded-full border text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all ${
-                          inCompare 
-                            ? (product.category === 'LAMP' ? 'bg-neon-yellow/10 border-neon-yellow/30 text-neon-yellow' : 'bg-neon-cyan/10 border-neon-cyan/30 text-neon-cyan') 
-                            : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'
-                        }`}
+                        className={`p-2 rounded-full border text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-all ${inCompare
+                            ? (product.category === 'LAMP' ? 'bg-[#FFC857]/10 border-[#FFC857]/30 text-[#FFC857]' : 'bg-[#0057FF]/10 border-[#0057FF]/30 text-[#0057FF]')
+                            : 'border-black/10 text-black/40 hover:text-[#111111] hover:border-black/20'
+                          }`}
                       >
                         <Columns size={12} />
                         {inCompare ? 'Compared' : 'Compare'}
@@ -270,9 +266,8 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
 
                       <button
                         onClick={() => handleOpenProduct(product)}
-                        className={`text-black transition-all px-4 py-1.5 rounded-full text-[10px] font-bold cursor-pointer ${
-                          product.category === 'LAMP' ? 'bg-white hover:bg-neon-yellow' : 'bg-white hover:bg-neon-cyan'
-                        }`}
+                        className={`text-black transition-all px-4 py-1.5 rounded-full text-[10px] font-bold cursor-pointer ${product.category === 'LAMP' ? 'bg-white hover:bg-[#FFC857]' : 'bg-white hover:bg-[#0057FF]'
+                          }`}
                       >
                         VIEW SPECS
                       </button>
@@ -290,15 +285,15 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
             <button
               onClick={() => setPageNum(Math.max(1, page - 1))}
               disabled={page === 1}
-              className="px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 text-xs disabled:opacity-30 cursor-pointer"
+              className="px-3 py-1.5 rounded bg-black/5 hover:bg-white/10 text-xs disabled:opacity-30 cursor-pointer"
             >
               Previous
             </button>
-            <span className="text-xs text-white/50 px-2">Page {page} of {totalPages}</span>
+            <span className="text-xs text-black/50 px-2">Page {page} of {totalPages}</span>
             <button
               onClick={() => setPageNum(Math.min(totalPages, page + 1))}
               disabled={page === totalPages}
-              className="px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 text-xs disabled:opacity-30 cursor-pointer"
+              className="px-3 py-1.5 rounded bg-black/5 hover:bg-white/10 text-xs disabled:opacity-30 cursor-pointer"
             >
               Next
             </button>
@@ -308,16 +303,16 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
 
       {/* 5. COMPARE BOTTOM DRAWER PANEL */}
       {compareList.length > 0 && (
-        <div className="fixed bottom-0 left-0 w-full glass-panel border-t border-white/10 z-40 p-4 animate-slide-up shadow-2xl">
+        <div className="fixed bottom-0 left-0 w-full bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#E5E7EB] border-t border-black/10 z-40 p-4 animate-slide-up shadow-2xl">
           <div className="max-w-6xl mx-auto flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-neon-cyan font-bold tracking-widest flex items-center gap-1.5">
+              <span className="text-[10px] text-[#0057FF] font-bold tracking-widest flex items-center gap-1.5">
                 <Columns size={12} />
                 COMPARE MATRIX ({compareList.length}/3)
               </span>
-              <button 
-                onClick={() => setCompareList([])} 
-                className="text-white/40 hover:text-white text-xs flex items-center gap-1"
+              <button
+                onClick={() => setCompareList([])}
+                className="text-black/40 hover:text-[#111111] text-xs flex items-center gap-1"
               >
                 Clear Matrix <X size={12} />
               </button>
@@ -325,17 +320,17 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {compareList.map((prod) => (
-                <div key={prod.id} className="p-3 bg-white/3 rounded-lg border border-white/5 flex items-center justify-between">
+                <div key={prod.id} className="p-3 bg-white/3 rounded-lg border border-black/5 flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
-                    <img src={prod.images[0]} alt={prod.name} className="w-10 h-10 object-cover rounded border border-white/10" />
+                    <img src={prod.images[0]} alt={prod.name} className="w-10 h-10 object-cover rounded border border-black/10" />
                     <div className="min-w-0">
-                      <h4 className="text-[11px] font-bold truncate text-white">{prod.name}</h4>
-                      <p className="text-[10px] text-neon-cyan font-bold">₹{prod.basePrice.toFixed(0)}</p>
+                      <h4 className="text-[11px] font-bold truncate text-[#111111]">{prod.name}</h4>
+                      <p className="text-[10px] text-[#0057FF] font-bold">₹{prod.basePrice.toFixed(0)}</p>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => handleToggleCompare(prod)} 
-                    className="text-white/35 hover:text-neon-rose p-1"
+                  <button
+                    onClick={() => handleToggleCompare(prod)}
+                    className="text-black/35 hover:text-red-500 p-1"
                   >
                     <X size={14} />
                   </button>
@@ -348,7 +343,7 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
               onClick={() => {
                 alert(`Compare Specs:\\n\\n${compareList.map(p => `[${p.name}] Price: ₹${p.basePrice} | Category: ${p.category} | Rating: ${p.rating}`).join('\\n')}`);
               }}
-              className="liquid-glass-cyan text-center py-2 rounded-full text-[10px] font-bold tracking-wide cursor-pointer"
+              className="bg-[#111111] text-white hover:bg-[#333333] text-center py-2 rounded-full text-[10px] font-bold tracking-wide cursor-pointer"
             >
               INSPECT GRID OVERLAYS
             </button>
@@ -360,24 +355,24 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
       {modalOpen && selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 md:p-8 font-sans">
           <div onClick={() => setModalOpen(false)} className="absolute inset-0 bg-black/85 backdrop-blur-md" />
-          
-          <div className="w-full max-w-5xl glass-panel rounded-2xl border border-white/10 z-10 overflow-y-auto max-h-[90vh] flex flex-col md:flex-row relative">
-            <button 
-              onClick={() => setModalOpen(false)} 
-              className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black text-white/50 hover:text-white rounded-full z-20 cursor-pointer"
+
+          <div className="w-full max-w-5xl bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#E5E7EB] rounded-2xl border border-black/10 z-10 overflow-y-auto max-h-[90vh] flex flex-col md:flex-row relative">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black text-black/50 hover:text-[#111111] rounded-full z-20 cursor-pointer"
             >
               <X size={18} />
             </button>
 
             {/* Left: Product Image Gallery */}
-            <div className="w-full md:w-1/2 p-6 bg-black/40 border-b md:border-b-0 md:border-r border-white/5 flex flex-col justify-between gap-6">
-              <div className="w-full h-[320px] md:h-[400px] rounded-xl overflow-hidden relative border border-white/5 bg-black/25 flex items-center justify-center">
+            <div className="w-full md:w-1/2 p-6 bg-black/5 border-b md:border-b-0 md:border-r border-black/5 flex flex-col justify-between gap-6">
+              <div className="w-full h-[320px] md:h-[400px] rounded-xl overflow-hidden relative border border-black/5 bg-black/25 flex items-center justify-center">
                 <img
                   src={selectedProduct.images[activeImageIndex] || selectedProduct.images[0]}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover transition-opacity duration-300"
                 />
-                <span className="absolute bottom-3 left-3 bg-black/60 text-white/80 border border-white/5 px-2 py-0.5 text-[9px] rounded font-semibold tracking-wider">
+                <span className="absolute bottom-3 left-3 bg-black/60 text-black/80 border border-black/5 px-2 py-0.5 text-[9px] rounded font-semibold tracking-wider">
                   IMAGE {activeImageIndex + 1} OF {selectedProduct.images.length}
                 </span>
               </div>
@@ -389,11 +384,10 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
                     <button
                       key={idx}
                       onClick={() => setActiveImageIndex(idx)}
-                      className={`w-14 h-14 rounded-lg overflow-hidden border transition-all cursor-pointer bg-black/35 ${
-                        activeImageIndex === idx 
-                          ? (selectedProduct.category === 'LAMP' ? 'border-neon-yellow' : 'border-neon-cyan')
-                          : 'border-white/10 opacity-60 hover:opacity-100 hover:border-white/20'
-                      }`}
+                      className={`w-14 h-14 rounded-lg overflow-hidden border transition-all cursor-pointer bg-black/35 ${activeImageIndex === idx
+                          ? (selectedProduct.category === 'LAMP' ? 'border-[#FFC857]' : 'border-[#0057FF]')
+                          : 'border-black/10 opacity-60 hover:opacity-100 hover:border-black/20'
+                        }`}
                     >
                       <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
                     </button>
@@ -405,21 +399,21 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
             {/* Right: Specifications, CAD, Reviews */}
             <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between gap-6 overflow-y-auto max-h-[90vh] md:max-h-[800px]">
               <div>
-                <span className="text-[9px] text-neon-cyan font-bold tracking-widest uppercase">{selectedProduct.category} COLLECTION</span>
-                <h2 className="font-display font-bold text-xl md:text-2xl text-white mt-1">{selectedProduct.name}</h2>
-                
-                <p className="text-xs text-white/50 mt-3 leading-relaxed">
+                <span className="text-[9px] text-[#0057FF] font-bold tracking-widest uppercase">{selectedProduct.category} COLLECTION</span>
+                <h2 className="font-display font-bold text-xl md:text-2xl text-[#111111] mt-1">{selectedProduct.name}</h2>
+
+                <p className="text-xs text-black/50 mt-3 leading-relaxed">
                   {selectedProduct.description}
                 </p>
 
                 {/* Specs Table */}
                 <div className="mt-5">
-                  <h4 className="text-[10px] text-white font-bold tracking-wider mb-2 border-b border-white/5 pb-1">TECHNICAL SPECIFICATIONS</h4>
+                  <h4 className="text-[10px] text-[#111111] font-bold tracking-wider mb-2 border-b border-black/5 pb-1">TECHNICAL SPECIFICATIONS</h4>
                   <div className="flex flex-col gap-1.5 text-[11px]">
                     {Object.entries(selectedProduct.specs as Record<string, string>).map(([k, v]) => (
-                      <div key={k} className="flex justify-between py-1 border-b border-white/3">
-                        <span className="text-white/40">{k}</span>
-                        <span className="text-white font-medium">{v}</span>
+                      <div key={k} className="flex justify-between py-1 border-b border-black/3">
+                        <span className="text-black/40">{k}</span>
+                        <span className="text-[#111111] font-medium">{v}</span>
                       </div>
                     ))}
                   </div>
@@ -429,26 +423,26 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
 
                 {/* Star review Feed */}
                 <div className="mt-8">
-                  <h4 className="text-[10px] text-white font-bold tracking-wider mb-4 border-b border-white/5 pb-1 uppercase">
+                  <h4 className="text-[10px] text-[#111111] font-bold tracking-wider mb-4 border-b border-black/5 pb-1 uppercase">
                     Operator Reviews ({modalReviews.length})
                   </h4>
 
                   {/* Add review form */}
                   {user ? (
-                    <form onSubmit={handleReviewSubmit} className="flex flex-col gap-2 p-3 bg-white/3 rounded-lg border border-white/5 mb-6 text-xs">
+                    <form onSubmit={handleReviewSubmit} className="flex flex-col gap-2 p-3 bg-white/3 rounded-lg border border-black/5 mb-6 text-xs">
                       <span className="font-bold text-[10px]">WRITE A BRIEF REVIEW</span>
-                      
+
                       <div className="flex items-center gap-3">
-                        <span className="text-white/60 text-[10px]">Star rating:</span>
+                        <span className="text-black/60 text-[10px]">Star rating:</span>
                         <div className="flex gap-1">
                           {[1, 2, 3, 4, 5].map((s) => (
                             <button
                               key={s}
                               type="button"
                               onClick={() => setReviewRating(s)}
-                              className="text-neon-yellow"
+                              className="text-[#FFC857]"
                             >
-                              <Star size={13} className={reviewRating >= s ? 'fill-neon-yellow' : ''} />
+                              <Star size={13} className={reviewRating >= s ? 'fill-[#FFC857]' : ''} />
                             </button>
                           ))}
                         </div>
@@ -459,20 +453,20 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
                         value={reviewComment}
                         onChange={(e) => setReviewComment(e.target.value)}
                         required
-                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-neon-cyan min-h-[60px]"
+                        className="w-full bg-white border border-black/10 rounded px-2.5 py-1.5 text-xs text-[#111111] placeholder-white/20 focus:outline-none focus:border-[#0057FF] min-h-[60px]"
                       />
 
-                      {reviewError && <p className="text-[9px] text-neon-rose font-medium">{reviewError}</p>}
+                      {reviewError && <p className="text-[9px] text-red-500 font-medium">{reviewError}</p>}
                       <button
                         type="submit"
                         disabled={reviewLoading}
-                        className="bg-white text-black py-1.5 rounded font-bold text-[9px] hover:bg-neon-cyan transition-colors self-end px-4 cursor-pointer"
+                        className="bg-white text-black py-1.5 rounded font-bold text-[9px] hover:bg-[#0057FF] transition-colors self-end px-4 cursor-pointer"
                       >
                         {reviewLoading ? 'Submitting...' : 'POST REVIEW'}
                       </button>
                     </form>
                   ) : (
-                    <p className="text-[10px] text-white/30 mb-6 bg-white/3 p-2 rounded text-center border border-white/5">
+                    <p className="text-[10px] text-black/30 mb-6 bg-white/3 p-2 rounded text-center border border-black/5">
                       Sign in to submit your product experience reviews.
                     </p>
                   )}
@@ -480,33 +474,33 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
                   {/* Review thread list */}
                   <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto pr-2">
                     {modalReviews.length === 0 ? (
-                      <p className="text-[10px] text-white/30 text-center py-4">No reviews posted yet.</p>
+                      <p className="text-[10px] text-black/30 text-center py-4">No reviews posted yet.</p>
                     ) : (
                       modalReviews.map((rev) => (
-                        <div key={rev.id} className="border-b border-white/5 pb-3 flex flex-col gap-1.5 text-[11px]">
+                        <div key={rev.id} className="border-b border-black/5 pb-3 flex flex-col gap-1.5 text-[11px]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1.5">
-                              <span className="font-semibold text-white">{rev.userName}</span>
+                              <span className="font-semibold text-[#111111]">{rev.userName}</span>
                               {rev.isVerifiedPurchase && (
-                                <span className="bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 px-1 py-0.5 rounded text-[8px] flex items-center gap-0.5 font-bold">
+                                <span className="bg-[#0057FF]/10 text-[#0057FF] border border-[#0057FF]/20 px-1 py-0.5 rounded text-[8px] flex items-center gap-0.5 font-bold">
                                   <ShieldCheck size={8} /> VERIFIED BUYER
                                 </span>
                               )}
                             </div>
                             <div className="flex gap-0.5">
                               {[...Array(rev.rating)].map((_, i) => (
-                                <Star key={i} size={9} className="fill-neon-yellow text-neon-yellow" />
+                                <Star key={i} size={9} className="fill-[#FFC857] text-[#FFC857]" />
                               ))}
                             </div>
                           </div>
 
-                          <p className="text-white/60 leading-relaxed italic">"{rev.comment}"</p>
+                          <p className="text-black/60 leading-relaxed italic">"{rev.comment}"</p>
 
-                          <div className="flex items-center gap-4 text-[9px] text-white/30 mt-1">
+                          <div className="flex items-center gap-4 text-[9px] text-black/30 mt-1">
                             <span>{new Date(rev.createdAt).toLocaleDateString()}</span>
                             <button
                               onClick={() => handleVoteHelpful(rev.id)}
-                              className="hover:text-neon-cyan flex items-center gap-1 cursor-pointer"
+                              className="hover:text-[#0057FF] flex items-center gap-1 cursor-pointer"
                             >
                               <ThumbsUp size={10} /> Helpful ({rev.helpfulVotes})
                             </button>
@@ -519,10 +513,10 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
               </div>
 
               {/* Purchase CTA Section */}
-              <div className="border-t border-white/5 pt-4 flex items-center justify-between">
+              <div className="border-t border-black/5 pt-4 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-white/40 block">Unit base price</span>
-                  <span className="text-base font-bold text-white">₹{selectedProduct.basePrice.toFixed(2)}</span>
+                  <span className="text-[10px] text-black/40 block">Unit base price</span>
+                  <span className="text-base font-bold text-[#111111]">₹{selectedProduct.basePrice.toFixed(2)}</span>
                 </div>
 
                 <div className="flex gap-2">
@@ -532,7 +526,7 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
                         setPage('builder');
                         setModalOpen(false);
                       }}
-                      className="border border-neon-magenta/30 hover:border-neon-magenta text-white hover:bg-neon-magenta/5 px-4 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer"
+                      className="border border-neon-magenta/30 hover:border-neon-magenta text-[#111111] hover:bg-neon-magenta/5 px-4 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer"
                     >
                       Bespoke Designer
                     </button>
@@ -548,7 +542,7 @@ export const Shop: React.FC<ShopProps> = ({ setPage, addToCartGlobal }) => {
                       });
                       alert(`${selectedProduct.name} added to cart.`);
                     }}
-                    className="liquid-glass-cyan px-6 py-2.5 rounded-full text-xs font-bold cursor-pointer"
+                    className="bg-[#111111] text-white hover:bg-[#333333] px-6 py-2.5 rounded-full text-xs font-bold cursor-pointer"
                   >
                     ADD TO CART
                   </button>
