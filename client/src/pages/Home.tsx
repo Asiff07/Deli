@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, Package, Quote } from 'lucide-react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
+import { FeaturedProducts } from '../components/FeaturedProducts';
+import { MediaShowcase } from '../components/MediaShowcase';
+import { ShopConfidence } from '../components/ShopConfidence';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -212,116 +215,17 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
         </div>
       </section>
 
-      {/* 3. PRODUCT CATEGORIES */}
-      <section className="w-full py-32 px-6 md:px-16 bg-[#FAFAFA] relative z-20">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="gsap-fade-up text-center mb-24">
-            <h2 className="text-5xl md:text-6xl font-display font-bold text-[#111111] tracking-tight">Product Categories</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {['3D Printed Products', 'Drones', 'Drone Accessories'].map((title, i) => (
-              <div key={i} onClick={() => setPage('shop')} className="gsap-fade-up group relative aspect-square bg-white rounded-[3rem] p-10 shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-gray-100 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-700 hover:-translate-y-3 cursor-pointer flex flex-col justify-end overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
-                <h3 className="text-3xl font-semibold text-[#111111] group-hover:scale-105 transition-transform duration-700 origin-left">{title}</h3>
-                <div className="mt-4 flex items-center gap-2 text-[#0057FF] font-medium opacity-0 group-hover:opacity-100 transition-opacity translate-y-4 group-hover:translate-y-0 duration-500">
-                  View Collection <ArrowRight size={18} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* 4. FEATURED PRODUCTS (Accordion) */}
+      <section className="w-full py-16 bg-white relative z-20">
+        <FeaturedProducts setPage={setPage} />
       </section>
 
-      {/* 4. FEATURED PRODUCTS */}
-      <section className="w-full py-32 px-6 md:px-16 bg-white relative z-20">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="gsap-fade-up flex flex-col md:flex-row justify-between items-end mb-24 gap-6">
-            <h2 className="text-5xl md:text-6xl font-display font-bold text-[#111111] tracking-tight">Featured Products</h2>
-            <button onClick={() => setPage('shop')} className="flex items-center gap-2 font-medium hover:text-[#0057FF] transition-colors pb-2 border-b-2 border-transparent hover:border-[#0057FF]">
-              View Full Store <ArrowRight size={18} />
-            </button>
-          </div>
+      {/* 4.5 MEDIA SHOWCASE */}
+      <MediaShowcase />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              { name: 'Aerodyne Pro Cinematic', desc: '4K stabilized flight system with active object tracking and 45min endurance.', price: '$1,299' },
-              { name: 'Nexus Carbon Unibody', desc: 'Ultra-lightweight high-strength CNC carbon fiber frame for racing.', price: '$149' },
-              { name: 'Vertex 3D Lamp', desc: 'Bespoke parametric design lamp printed with microscopic precision.', price: '$89' }
-            ].map((product, i) => (
-              <div key={i} className="gsap-fade-up group cursor-pointer flex flex-col gap-8">
-                <div className="w-full aspect-[4/5] bg-[#F7F7F7] rounded-[2.5rem] overflow-hidden relative">
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500" />
-                  <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-5 py-2 rounded-full text-xs font-semibold tracking-wide shadow-sm">New</div>
-                </div>
-                <div>
-                  <div className="flex justify-between items-start gap-4">
-                    <h3 className="text-2xl font-semibold text-[#111111] leading-tight">{product.name}</h3>
-                    <span className="font-semibold text-xl text-[#0057FF]">{product.price}</span>
-                  </div>
-                  <p className="text-gray-500 mt-4 line-clamp-2 leading-relaxed text-lg">{product.desc}</p>
-                  <button className="mt-8 w-full py-5 rounded-full border border-gray-200 font-semibold hover:bg-[#111111] hover:text-white hover:border-transparent transition-all duration-300">
-                    View Product
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* 5. SHOP WITH CONFIDENCE */}
+      <ShopConfidence />
 
-      {/* 5. MANUFACTURING PROCESS */}
-      <section className="w-full py-40 px-6 md:px-16 bg-[#FAFAFA] overflow-hidden relative z-20">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="gsap-fade-up text-center mb-32">
-            <h2 className="text-5xl md:text-6xl font-display font-bold text-[#111111] tracking-tight">How It's Made</h2>
-            <p className="text-2xl text-gray-500 mt-6 max-w-3xl mx-auto font-light">Our streamlined process ensures maximum quality from concept to delivery.</p>
-          </div>
-
-          <div className="flex flex-col lg:flex-row items-center justify-between relative gap-12 lg:gap-0">
-            {/* Connecting Line */}
-            <div className="hidden lg:block absolute top-[40px] left-0 w-full h-[2px] bg-gray-200 -z-10" />
-
-            {['Idea', 'Design', '3D Printing', 'Assembly', 'Quality Check', 'Delivered'].map((step, i) => (
-              <div key={i} className="gsap-fade-up relative flex flex-col items-center gap-6 bg-[#FAFAFA] lg:px-4">
-                <div className="w-20 h-20 rounded-full bg-white shadow-2xl shadow-black/5 border border-gray-100 flex items-center justify-center text-2xl font-bold text-[#111111] z-10 group-hover:scale-110 transition-transform">
-                  {i + 1}
-                </div>
-                <h4 className="font-semibold text-xl text-[#111111]">{step}</h4>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. WHY CHOOSE US */}
-      <section className="w-full py-40 px-6 md:px-16 bg-white relative z-20">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <div className="gsap-fade-up">
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-[#111111] leading-[1.1] tracking-tight">
-              Engineered for<br />those who demand<br />the best.
-            </h2>
-            <p className="mt-8 text-2xl text-gray-500 font-light leading-relaxed">
-              We utilize state-of-the-art SLS and FDM printing technologies alongside aerospace-grade carbon fiber CNC routing to produce uncompromising hardware.
-            </p>
-            <div className="mt-12 flex flex-col gap-6">
-              {[
-                'Micro-precision additive manufacturing',
-                'Automated quality assurance pipelines',
-                'Aerospace-grade materials',
-                'Global priority shipping'
-              ].map((feature, i) => (
-                <div key={i} className="flex items-center gap-5">
-                  <CheckCircle2 className="text-[#0057FF] w-8 h-8" />
-                  <span className="text-xl font-medium text-[#111111]">{feature}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="gsap-fade-up w-full aspect-square bg-[#F7F7F7] rounded-[4rem] p-10 flex items-center justify-center border border-gray-100 shadow-inner">
-            <Package size={160} className="text-gray-200" strokeWidth={1} />
-          </div>
-        </div>
-      </section>
 
       {/* 7. TESTIMONIALS */}
       <section className="w-full py-40 px-6 md:px-16 bg-[#FAFAFA] relative z-20">
@@ -355,7 +259,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
       <section className="w-full py-40 px-6 md:px-16 bg-[#FAF9F6] text-[#111111] relative z-20 overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white rounded-full blur-[200px] opacity-40 pointer-events-none" />
-        
+
         <div className="max-w-4xl mx-auto text-center gsap-fade-up relative z-10">
           <h2 className="text-6xl md:text-8xl font-display font-bold tracking-tight leading-[1.1]">Ready to elevate your project?</h2>
           <p className="mt-8 text-2xl text-[#6B7280] font-light max-w-2xl mx-auto leading-relaxed">
