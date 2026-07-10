@@ -1,4 +1,4 @@
-# Lumen x Deli 💡 🛸
+# Project Deli 💡 🛸
 
 A high-end, premium e-commerce platform specializing in **3D Printed Lamps & Custom Drone Parts**. Features an interactive 3D product customizer, fully integrated order processing, administrative tools, support ticketing, and user dashboards.
 
@@ -10,14 +10,15 @@ Built as a **TypeScript Monorepo** leveraging workspaces to share types and vali
 
 The project is structured as a monorepo under the following workspace directories:
 
-* **[client/](file:///d:/WebDevelopment/Lumen%20x%20Deli/client)**: The frontend single page application built using **Vite**, **React**, and **Tailwind CSS v4**. Includes interactive 3D elements powered by **Three.js** and **React Three Fiber**.
-* **[server/](file:///d:/WebDevelopment/Lumen%20x%20Deli/server)**: The backend API service built with **Express** and **Prisma ORM** connecting to **MongoDB**.
-* **[shared/](file:///d:/WebDevelopment/Lumen%20x%20Deli/shared)**: Shared logic, types, and **Zod** validation schemas shared between the client and server to guarantee absolute type-safety.
+* **[client/](./client)**: The frontend single page application built using **Vite**, **React**, and **Tailwind CSS v4**. Includes interactive 3D elements powered by **Three.js** and **React Three Fiber**.
+* **[server/](./server)**: The backend API service built with **Express** and **Prisma ORM** connecting to **MongoDB**.
+* **[shared/](./shared)**: Shared logic, types, and **Zod** validation schemas shared between the client and server to guarantee absolute type-safety.
 
 ---
 
 ## 🚀 Key Features
 
+* ✨ **Light Luxury Theme & Premium UI**: Apple-inspired cinematic intro screen, fluid glassmorphism components, and a cohesive "Warm White" aesthetic optimized with Framer Motion.
 * 💻 **Interactive 3D Product Customizer**: View and modify 3D printed lamps and drone parts directly in the browser via Three.js, React Three Fiber, GSAP, and Framer Motion.
 * 🛍️ **Full-Featured Cart & E-commerce System**: High-performance cart management backed by Zustand and fully-integrated **Stripe payments**.
 * 🛡️ **Role-Based Auth & Security**: User authentication (BCrypt, JWT) supporting custom roles (`SUPER_ADMIN`, `ADMIN`, `EDITOR`, `CUSTOMER_SUPPORT`, `USER`). Armed with security middlewares (`helmet`, `express-rate-limit`, `cors`, `compression`).
@@ -58,7 +59,7 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
-Create a `.env` file in the **[server/](file:///d:/WebDevelopment/Lumen%20x%20Deli/server)** directory with the following variables:
+Create a `.env` file in the **[server/](./server)** directory with the following variables:
 ```env
 PORT=5000
 NODE_ENV=development
@@ -76,7 +77,7 @@ STRIPE_WEBHOOK_SECRET="your-stripe-webhook-secret"
 
 # Resend Mailer
 RESEND_API_KEY="your-resend-api-key"
-EMAIL_FROM="Lumen x Deli <noreply@yourdomain.com>"
+EMAIL_FROM="Project Deli <noreply@yourdomain.com>"
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME="your-cloudinary-name"
